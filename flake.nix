@@ -52,7 +52,7 @@
       {
         packages.default = neovim;
 	overlays.default = final: prev: {
-	  nvim-nix = neovim;
+	  nvim-custom = neovim;
 	};
       }
     );
