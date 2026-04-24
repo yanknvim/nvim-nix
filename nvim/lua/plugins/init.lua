@@ -1,0 +1,5 @@
+require("plugins.incline")
+require("plugins.reactive")
+require("plugins.indent-blankline")
+require("plugins.gitsigns")
+require("plugins.autopairs")
