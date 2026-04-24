@@ -3,7 +3,7 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    flake-utils.url = "github:numtide/flake-utils";
+    flake-parts.url = "github:hercules-ci/flake-parts";
 
     reactive-nvim = {
       url = "github:rasulomaroff/reactive.nvim";
@@ -11,49 +11,24 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs = { self, nixpkgs, flake-parts, ... }@inputs:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      imports = [
+        inputs.flake-parts.flakeModules.easyOverlay
+      ];
+
+      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
+
+      perSystem = { pkgs, system, ... }: 
       let
-        pkgs = nixpkgs.legacyPackages.${system};
-
-        config = pkgs.lib.cleanSource ./nvim;
-
-        mkPlugin = name: src: pkgs.vimUtils.buildVimPlugin { inherit name src; };
-
-        neovim = pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
-          autoconfigure = true;
-          autowrapRuntimeDeps = true;
-
-          wrapperArgs = [
-            "--add-flags" "--cmd 'set runtimepath^=${config}'"
-            "--add-flags" "--cmd 'set runtimepath^=${config}/after'"
-            "--add-flags" "-u ${config}/init.lua"
-          ];
-          wrapRc = false;
-
-          plugins = with pkgs.vimPlugins; [
-            nvim-web-devicons
-            kanagawa-nvim
-            incline-nvim
-            nvim-lspconfig
-            indent-blankline-nvim
-            gitsigns-nvim
-            nvim-autopairs
-            (mkPlugin "reactive-nvim" inputs.reactive-nvim)
-          ];
-
-          extraPackages = with pkgs; [
-            lua-language-server
-            rust-analyzer
-            nil
-          ];
-        };
+        neovim = import ./nix/mkNeovim.nix { inherit inputs; } pkgs;
       in
       {
+        overlayAttrs = {
+          nvim-custom = neovim;
+        };
+	
         packages.default = neovim;
-	overlays.default = final: prev: {
-	  nvim-custom = neovim;
-	};
-      }
-    );
+      };
+    };
 }
