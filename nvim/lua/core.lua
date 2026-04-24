@@ -30,3 +30,5 @@ opt.laststatus = 0
 opt.statusline = "─"
 opt.fillchars:append({ stl = "─", stlnc = "─" })
 
+vim.g.pumblend = 15
+vim.g.pumborder = "rounded"

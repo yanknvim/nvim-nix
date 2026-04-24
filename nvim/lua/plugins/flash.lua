@@ -1,1 +1,4 @@
-vim.keymap.set({"n", "x", "o"}, "s", function() require("flash").jump {} end)
+vim.keymap.set({"n", "x", "o"}, "s", function()
+    vim.cmd("packadd flash.nvim")
+    require("flash").jump {}
+end)
