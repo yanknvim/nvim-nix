@@ -2,11 +2,15 @@
   description = "My Neovim Flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
 
     reactive-nvim = {
       url = "github:rasulomaroff/reactive.nvim";
+      flake = false;
+    };
+    skkeleton = {
+      url = "github:vim-skk/skkeleton";
       flake = false;
     };
   };
