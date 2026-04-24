@@ -8,6 +8,7 @@
             nvim-web-devicons
             kanagawa-nvim
             nvim-autopairs
+            snacks-nvim
             (mkPlugin "reactive-nvim" inputs.reactive-nvim)
             (mkPlugin "skkeleton" inputs.skkeleton)
           ];
@@ -16,7 +17,6 @@
             incline-nvim
             indent-blankline-nvim
             flash-nvim
-            snacks-nvim
           ];
         };
       };
@@ -24,12 +24,11 @@
       mkPlugin = name: src: pkgs.vimUtils.buildVimPlugin { inherit name src; };
     in
       pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
-        autoconfigure = true;
+        autoconfigure = false;
         autowrapRuntimeDeps = true;
 
         wrapperArgs = [
           "--add-flags" "--cmd 'set packpath^=${packDir}'"
-          "--add-flags" "--cmd 'set runtimepath^=${packDir}'"
           "--add-flags" "--cmd 'set runtimepath^=${config}'"
           "--add-flags" "--cmd 'set runtimepath+=${config}/after'"
           "--add-flags" "--cmd 'let g:skk_jisyo = \"${pkgs.skkDictionaries.l}/share/skk/SKK-JISYO.L\"'"
