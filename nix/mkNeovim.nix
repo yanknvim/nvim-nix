@@ -9,6 +9,7 @@
             kanagawa-nvim
             nvim-autopairs
             snacks-nvim
+            nvim-lspconfig
             (mkPlugin "reactive-nvim" inputs.reactive-nvim)
             (mkPlugin "skkeleton" inputs.skkeleton)
           ];
@@ -20,14 +21,26 @@
           ];
         };
       };
+
+
       config = pkgs.lib.cleanSource ../nvim;
       mkPlugin = name: src: pkgs.vimUtils.buildVimPlugin { inherit name src; };
+
+      extraTools = with pkgs; [
+        lua-language-server
+        rust-analyzer
+        nil
+        ripgrep
+        fd
+        skkDictionaries.l
+      ];
     in
       pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
         autoconfigure = false;
         autowrapRuntimeDeps = true;
 
         wrapperArgs = [
+          "--prefix" "PATH" ":" "${pkgs.lib.makeBinPath extraTools}"
           "--add-flags" "--cmd 'set packpath^=${packDir}'"
           "--add-flags" "--cmd 'set runtimepath^=${config}'"
           "--add-flags" "--cmd 'set runtimepath+=${config}/after'"
@@ -37,13 +50,4 @@
         wrapRc = false;
 
         plugins = [];
-
-        extraPackages = with pkgs; [
-          lua-language-server
-          rust-analyzer
-          nil
-          rg
-          fd
-          skkDictionaries.l
-        ];
       }

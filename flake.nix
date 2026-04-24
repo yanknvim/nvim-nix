@@ -24,15 +24,15 @@
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { pkgs, system, ... }: 
-      let
-        neovim = import ./nix/mkNeovim.nix { inherit inputs; } pkgs;
-      in
-      {
-        overlayAttrs = {
-          nvim-custom = neovim;
+        let
+          neovim = import ./nix/mkNeovim.nix { inherit inputs; } pkgs;
+        in
+        {
+          overlayAttrs = {
+            nvim-custom = neovim;
+          };
+    
+          packages.default = neovim;
         };
-	
-        packages.default = neovim;
-      };
     };
 }
